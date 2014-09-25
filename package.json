@@ -1,0 +1,32 @@
+{
+  "name": "refactor-ratchet",
+  "version": "0.0.1",
+  "description": "Gulp task to monitor code metric progress and prevent regressions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnsetzer/refactor-ratchet.git"
+  },
+  "keywords": [
+    "gulp",
+    "refactor",
+    "metric",
+    "gulpplugin"
+  ],
+  "author": "John Setzer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johnsetzer/refactor-ratchet/issues"
+  },
+  "homepage": "https://github.com/johnsetzer/refactor-ratchet",
+  "dependencies": {
+    "bluebird": "^2.3.2",
+    "byline": "^4.1.1",
+    "gulp-util": "^3.0.1",
+    "lodash": "^2.4.1",
+    "through2": "^0.6.2"
+  }
+}
