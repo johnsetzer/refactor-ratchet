@@ -37,7 +37,7 @@ function matchCounter(rrHelper, searchString) {
       });
 
       lineStream.on('end', function() {
-        console.log('patternCount', patternCount);
+        rrHelper.setMetric(file, patternCount);
         cb();
       });
 
