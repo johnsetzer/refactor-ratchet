@@ -1,10 +1,11 @@
 var gulp = require('gulp');
 var _ = require('lodash');
-var RR = require('../index.js');
-var matchCounter = require('./rr_match_counter');
+var RR = require('./index');
+var Task = RR.Task;
+var matchCounter = RR.matchCounter;
 
 gulp.task('default', function(cb) {
-  var rr = new RR({
+  var rr = new Task({
   	key: 'deprecatedFunc',
   	paths: ['../lib/*.js'],
 
