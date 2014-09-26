@@ -7,7 +7,7 @@ var matchCounter = RR.matchCounter;
 gulp.task('default', function(cb) {
   var rr = new Task({
   	key: 'deprecatedFunc',
-  	paths: ['../lib/*.js'],
+  	paths: ['./lib/*.js'],
 
     // Chance to calculate your own total metrics before RR flushes them to the database.
     syntheticTotals: function (totalMetrics, cb) {
