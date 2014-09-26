@@ -42,7 +42,7 @@ gulp.task('default', function(cb) {
 	});
 
   rr.src({ buffer: false })
-  	.pipe(matchCounter(rr.helper(), 'console.log'))
+    .pipe(matchCounter(rr.helper(), 'console.log'))
     .pipe(rr.dest(cb));
 });
 
