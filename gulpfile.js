@@ -2,9 +2,11 @@ var gulp = require('gulp');
 var _ = require('lodash');
 var RR = require('./index');
 var Task = RR.Task;
+var ConsoleReporter = RR.ConsoleReporter;
 var matchCounter = RR.matchCounter;
+var longFileCounter = RR.longFileCounter;
 
-gulp.task('default', function(cb) {
+gulp.task('default', function(taskCb) {
   var rr = new Task({
   	key: 'deprecatedFunc',
   	paths: ['./lib/*.js'],
@@ -22,7 +24,7 @@ gulp.task('default', function(cb) {
       // 'deprecatedFunc.stdDev'
 
       // At this point one could caluculate synthetic values such as:
-      //totalMetrics['deprecatedFunc.filePercentage'] = totalMetrics['deprecatedFunc.nonZeroFileCount'] / totalMetrics['deprecatedFunc.fileCount'] * 100;
+      totalMetrics['deprecatedFunc.filePercentage'] = totalMetrics['deprecatedFunc.nonZeroFileCount'] / totalMetrics['deprecatedFunc.fileCount'] * 100;
       // Lots of the places you might copy this data might 
       // be better places to caluculate synthetic values on an ad-hoc basis.
       cb();
@@ -43,6 +45,20 @@ gulp.task('default', function(cb) {
 
   rr.src({ buffer: false })
     .pipe(matchCounter(rr.helper(), 'console.log'))
-    .pipe(rr.dest(cb));
+    .pipe(rr.dest(function () {}));
+
+  var rr = new Task({
+    key: 'longFiles',
+    paths: ['./lib/*.js'],
+
+    done: function (err, totalMetrics, cb) {
+      ConsoleReporter.report(totalMetrics);
+      cb();
+    }
+  });
+
+  rr.src({ buffer: false })
+    .pipe(longFileCounter(rr.helper(), 20))
+    .pipe(rr.dest(taskCb));
 });
 
