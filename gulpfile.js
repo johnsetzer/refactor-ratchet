@@ -5,6 +5,7 @@ var Task = RR.Task;
 var ConsoleReporter = RR.ConsoleReporter;
 var matchCounter = RR.matchCounter;
 var longFileCounter = RR.longFileCounter;
+var matchingFileCounter = RR.matchingFileCounter;
 
 gulp.task('default', function(taskCb) {
   var rr = new Task({
@@ -47,7 +48,7 @@ gulp.task('default', function(taskCb) {
     .pipe(matchCounter(rr.helper(), 'console.log'))
     .pipe(rr.dest(function () {}));
 
-  var rr = new Task({
+  var rr2 = new Task({
     key: 'longFiles',
     paths: ['./lib/*.js'],
 
@@ -57,8 +58,28 @@ gulp.task('default', function(taskCb) {
     }
   });
 
-  rr.src({ buffer: false })
-    .pipe(longFileCounter(rr.helper(), 20))
-    .pipe(rr.dest(taskCb));
+  rr2.src({ buffer: false })
+    .pipe(longFileCounter(rr2.helper(), 20))
+    .pipe(rr2.dest(function () {}));
+
+  var rr3 = new Task({
+    key: 'hasTestFile',
+    paths: ['./lib/*.js'],
+
+    done: function (err, totalMetrics, cb) {
+      ConsoleReporter.report(totalMetrics);
+      cb();
+    }
+  });
+
+  var testPath = function (jsPath) {
+    var matches = jsPath.match(/lib\/(.*)(.js)/);
+    var testPath = 'tests/' + matches[1] + '_spec.js';
+    return testPath;
+  };
+
+  rr3.src({ buffer: false })
+    .pipe(matchingFileCounter(rr3.helper(), testPath))
+    .pipe(rr3.dest(taskCb));
 });
 
