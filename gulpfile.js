@@ -91,7 +91,7 @@ gulp.task('default', function(taskCb) {
 });
 
 gulp.task('test', function () {
-  return gulp.src('tests/**/*.js')
+  return gulp.src('spec/**/*.js')
     .pipe(jasmine({
       verbose: true
     }));
