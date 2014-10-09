@@ -1,5 +1,5 @@
-var Range = require('../lib/range.js');
-var Commit = require('../lib/commit.js');
+var Range = require('../lib/range');
+var Commit = require('../lib/commit');
 
 describe('Range', function () {
 	var fromCommit, toCommit, range;

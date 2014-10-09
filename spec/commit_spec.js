@@ -1,4 +1,4 @@
-var Commit = require('../lib/commit.js');
+var Commit = require('../lib/commit');
 
 describe('Commit', function () {
   describe('Contructor', function () {

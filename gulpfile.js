@@ -1,5 +1,7 @@
 var gulp = require('gulp');
+gulp = require('gulp-help')(gulp);
 var jasmine = require('gulp-jasmine');
+var istanbul = require('gulp-istanbul');
 var _ = require('lodash');
 var RR = require('./index');
 var Task = RR.Task;
@@ -8,7 +10,7 @@ var matchCounter = RR.matchCounter;
 var longFileCounter = RR.longFileCounter;
 var matchingFileCounter = RR.matchingFileCounter;
 
-gulp.task('default', function(taskCb) {
+gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
   var rr = new Task({
   	key: 'deprecatedFunc',
   	paths: ['./lib/*.js'],
@@ -53,9 +55,11 @@ gulp.task('default', function(taskCb) {
 
   rr.src({ buffer: false })
     .pipe(matchCounter(rr.helper(), 'console.log'))
-    .pipe(rr.dest(function () {}));
+    .pipe(rr.dest(taskCb));
+});
 
-  var rr2 = new Task({
+gulp.task('rr-long-files', 'RR files that are too long', function(taskCb) {
+  var rr = new Task({
     key: 'longFiles',
     paths: ['./lib/*.js'],
 
@@ -65,11 +69,13 @@ gulp.task('default', function(taskCb) {
     }
   });
 
-  rr2.src({ buffer: false })
-    .pipe(longFileCounter(rr2.helper(), 20))
-    .pipe(rr2.dest(function () {}));
+  rr.src({ buffer: false })
+    .pipe(longFileCounter(rr.helper(), 20))
+    .pipe(rr.dest(taskCb));
+});
 
-  var rr3 = new Task({
+gulp.task('rr-has-test-file', 'RR lib files with spec files', function(taskCb) {
+  var rr = new Task({
     key: 'hasTestFile',
     paths: ['./lib/*.js'],
 
@@ -85,15 +91,34 @@ gulp.task('default', function(taskCb) {
     return testPath;
   };
 
-  rr3.src({ buffer: false })
-    .pipe(matchingFileCounter(rr3.helper(), testPath))
-    .pipe(rr3.dest(taskCb));
+  rr.src({ buffer: false })
+    .pipe(matchingFileCounter(rr.helper(), testPath))
+    .pipe(rr.dest(taskCb));
 });
 
-gulp.task('test', function () {
+gulp.task('ratchet', 'Run all RR tasks', ['rr-deprecated', 'rr-long-files', 'rr-has-test-file']);
+
+gulp.task('test', 'Run unit tests', function () {
   return gulp.src('spec/**/*.js')
     .pipe(jasmine({
       verbose: true
     }));
 });
+
+gulp.task('test-coverage', 'Run unit tests with test coverage', function (cb) {
+  gulp.src(['lib/**/*.js'])
+    .pipe(istanbul({
+      includeUntested: true
+    }))
+    .on('finish', function () {
+      gulp.src(['spec/**/*.js'])
+        .pipe(jasmine({
+          verbose: true
+        }))
+        .pipe(istanbul.writeReports())
+        .on('end', cb);
+    });
+});
+
+gulp.task('default', 'Run all RR tasks', ['ratchet']);
 
