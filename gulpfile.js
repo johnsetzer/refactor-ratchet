@@ -23,6 +23,12 @@ gulp.task('default', function(taskCb) {
       // 'deprecatedFunc.min'
       // 'deprecatedFunc.max'
       // 'deprecatedFunc.stdDev'
+      // deprecatedFunc.lineCount.sum
+      // deprecatedFunc.lineCount.mean
+      // deprecatedFunc.lineCount.median
+      // deprecatedFunc.lineCount.min
+      // deprecatedFunc.lineCount.max
+      // deprecatedFunc.lineCount.stdDev
 
       // At this point one could caluculate synthetic values such as:
       totalMetrics['deprecatedFunc.filePercentage'] = totalMetrics['deprecatedFunc.nonZeroFileCount'] / totalMetrics['deprecatedFunc.fileCount'] * 100;
