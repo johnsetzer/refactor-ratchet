@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var jasmine = require('gulp-jasmine');
 var _ = require('lodash');
 var RR = require('./index');
 var Task = RR.Task;
@@ -87,5 +88,12 @@ gulp.task('default', function(taskCb) {
   rr3.src({ buffer: false })
     .pipe(matchingFileCounter(rr3.helper(), testPath))
     .pipe(rr3.dest(taskCb));
+});
+
+gulp.task('test', function () {
+  return gulp.src('tests/**/*.js')
+    .pipe(jasmine({
+      verbose: true
+    }));
 });
 
