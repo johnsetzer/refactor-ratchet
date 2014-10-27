@@ -1,4 +1,5 @@
 var Task = require('../lib/task');
+
 describe('Task', function () {
 	var task;
 

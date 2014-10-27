@@ -3,15 +3,14 @@ gulp = require('gulp-help')(gulp);
 var jasmine = require('gulp-jasmine');
 var istanbul = require('gulp-istanbul');
 var _ = require('lodash');
-var RR = require('./index');
-var Task = RR.Task;
-var ConsoleReporter = RR.ConsoleReporter;
-var matchCounter = RR.matchCounter;
-var longFileCounter = RR.longFileCounter;
-var matchingFileCounter = RR.matchingFileCounter;
+// NOTE:
+// All refactor-ratchet dependencies are required in
+// task functions to prevent require from loading
+// pre-instrumented source files in the test-coverage task.
 
 gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
-  var rr = new Task({
+  var RR = require('./index');
+  var rr = new RR.Task({
   	key: 'deprecatedFunc',
   	paths: ['./lib/*.js'],
 
@@ -35,7 +34,7 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
 
       // At this point one could caluculate synthetic values such as:
       totalMetrics['deprecatedFunc.filePercentage'] = totalMetrics['deprecatedFunc.nonZeroFileCount'] / totalMetrics['deprecatedFunc.fileCount'] * 100;
-      // Lots of the places you might copy this data might 
+      // Lots of the places you might copy this data to might
       // be better places to caluculate synthetic values on an ad-hoc basis.
       cb();
     },
@@ -54,30 +53,58 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
 	});
 
   rr.src({ buffer: false })
-    .pipe(matchCounter(rr.helper(), 'console.log'))
+    .pipe(RR.matchCounter(rr.helper(), 'console.log'))
     .pipe(rr.dest(taskCb));
 });
 
 gulp.task('rr-long-files', 'RR files that are too long', function(taskCb) {
-  var rr = new Task({
+  var RR = require('./index');
+  var rr = new RR.Task({
     key: 'longFiles',
     paths: ['./lib/*.js'],
 
     done: function (err, totalMetrics, cb) {
-      ConsoleReporter.report(totalMetrics);
+      RR.ConsoleReporter.report(totalMetrics);
       cb();
     }
   });
 
   rr.src({ buffer: false })
-    .pipe(longFileCounter(rr.helper(), 20))
+    .pipe(RR.longFileCounter(rr.helper(), 20))
     .pipe(rr.dest(taskCb));
 });
 
+var calcTestPath = function (jsPath) {
+  var matches = jsPath.match(/lib\/(.*)(\.js)/);
+  var testPath = 'spec/' + matches[1] + '_spec.js';
+  return testPath;
+};
+
 gulp.task('rr-has-test-file', 'RR lib files with spec files', function(taskCb) {
-  var rr = new Task({
+  var RR = require('./index');
+  var rr = new RR.Task({
     key: 'hasTestFile',
     paths: ['./lib/*.js'],
+
+    done: function (err, totalMetrics, cb) {
+      RR.ConsoleReporter.report(totalMetrics);
+      cb();
+    }
+  });
+
+  rr.src({ buffer: false })
+    .pipe(RR.matchingFileCounter(rr.helper(), calcTestPath))
+    .pipe(rr.dest(taskCb));
+});
+
+gulp.task('rr-coverage', 'RR test coverate', function(taskCb) {
+  var Task = require('./lib/task');
+  var ConsoleReporter = require('./lib/console_reporter');
+  var coverageCounter = require('./plugins/coverage_counter');
+
+  var rr = new Task({
+    key: 'coverage',
+    paths: ['./lib/task.js'],
 
     done: function (err, totalMetrics, cb) {
       ConsoleReporter.report(totalMetrics);
@@ -85,18 +112,17 @@ gulp.task('rr-has-test-file', 'RR lib files with spec files', function(taskCb) {
     }
   });
 
-  var testPath = function (jsPath) {
-    var matches = jsPath.match(/lib\/(.*)(.js)/);
-    var testPath = 'tests/' + matches[1] + '_spec.js';
-    return testPath;
-  };
-
   rr.src({ buffer: false })
-    .pipe(matchingFileCounter(rr.helper(), testPath))
+    .pipe(coverageCounter(rr.helper(), calcTestPath))
     .pipe(rr.dest(taskCb));
 });
 
-gulp.task('ratchet', 'Run all RR tasks', ['rr-deprecated', 'rr-long-files', 'rr-has-test-file']);
+gulp.task('ratchet', 'Run all RR tasks', [
+  'rr-deprecated',
+  'rr-long-files',
+  'rr-has-test-file',
+  'rr-coverage'
+]);
 
 gulp.task('test', 'Run unit tests', function () {
   return gulp.src('spec/**/*.js')
