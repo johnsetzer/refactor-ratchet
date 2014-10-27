@@ -15,7 +15,7 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
   	paths: ['./lib/*.js'],
 
     // Chance to calculate your own total metrics before RR flushes them to the database.
-    syntheticTotals: function (totalMetrics, cb) {
+    syntheticTotals: function (totalMetrics) {
       // totalMetrics automatically includes:
       // 'deprecatedFunc.fileCount'
       // 'deprecatedFunc.nonZeroFileCount'
@@ -36,7 +36,6 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
       totalMetrics['deprecatedFunc.filePercentage'] = totalMetrics['deprecatedFunc.nonZeroFileCount'] / totalMetrics['deprecatedFunc.fileCount'] * 100;
       // Lots of the places you might copy this data to might
       // be better places to caluculate synthetic values on an ad-hoc basis.
-      cb();
     },
 
     // Called before RR exits
@@ -107,7 +106,7 @@ gulp.task('rr-coverage', 'RR test coverate', function(taskCb) {
 
   var rr = new Task({
     key: 'coverage',
-    paths: ['./lib/task.js'],
+    paths: ['./lib/*.js'],
 
     done: function (err, totalMetrics, cb) {
       ConsoleReporter.report(totalMetrics);

@@ -14,6 +14,18 @@ function coverageCounter(rrHelper, specFileFunc) {
     throw new PluginError(PLUGIN_NAME, 'Invalid specFileFunc.');
   }
 
+  var coveredKey = rrHelper.key + '.covered';
+  var totalKey = rrHelper.key + '.total';
+
+  rrHelper.addTotalKey(coveredKey);
+  rrHelper.addTotalKey(totalKey);
+  rrHelper.addSyntheticTotaler(function (totalMetrics) {
+    var key = rrHelper.key + '.truePercentage';
+    var truePct = totalMetrics[coveredKey + '.sum'] /
+      totalMetrics[totalKey + '.sum'] * 100;
+    totalMetrics[key] = truePct;
+  })
+
   // creating a stream through which each file will pass
   var stream = through.obj(function(file, enc, cb) {
     if (file.isBuffer()) {
@@ -24,39 +36,31 @@ function coverageCounter(rrHelper, specFileFunc) {
     if (file.isStream()) {
       var instrumentedPath = rrHelper.filePath(file);
       var specPath = specFileFunc(instrumentedPath);
-      console.log('processing', instrumentedPath, specPath)
+      console.log('processing', instrumentedPath, specPath);
+      // TODO
+      // noop if specPath doesn't exist
 
-
-      gulp.src(specPath)
-        .pipe(jasmine({
+      // gulp-istanbul only takes buffers as of version 0.3.1
+      // Instead of sending a pull request expediantly converting
+      // to buffer.
+      // TODO Do the above comment.
+      // Right now we are being wasteful and not using provided stream?
+      gulp.src([instrumentedPath]).pipe(istanbul({
+        includeUntested: true
+      }))
+      .on('finish', function () {
+        gulp.src([specPath]).pipe(jasmine({
           verbose: true
-        })).on('finish', function () {
-            console.log('finished')
-            // var data = istanbul.summarizeCoverage();
-            // console.log(data);
-            // rrHelper.setFileMetric(file, rrHelper.key + '.covered', 1);
-            // rrHelper.setFileMetric(file, rrHelper.key + '.total', 2);
-            rrHelper.setFileMetric(file, 2);
-            cb();
-          });
-      
-      // file.contents.pipe(istanbul({
-      //   includeUntested: true
-      // }))
-      // .on('finish', function () {
-        // gulp.src([specPath])
-        //   .pipe(jasmine({
-        //     verbose: true
-        //   }))
-        //   .on('finish', function () {
-        //     console.log('finished')
-        //     // var data = istanbul.summarizeCoverage();
-        //     // console.log(data);
-        //     rrHelper.setFileMetric(file, rrHelper.key + '.covered', 1);
-        //     rrHelper.setFileMetric(file, rrHelper.key + '.total', 2);
-        //     cb();
-        //   });
-      // });
+        }))
+        .on('finish', function () {
+          console.log('finished')
+          var statements = istanbul.summarizeCoverage().statements;
+          rrHelper.setFileMetric(file, rrHelper.key, statements.pct);
+          rrHelper.setFileMetric(file, coveredKey, statements.covered);
+          rrHelper.setFileMetric(file, totalKey, statements.total);
+          cb();
+        });
+      });
     }
 
     this.push(file);
