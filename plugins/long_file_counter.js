@@ -24,7 +24,7 @@ function longFileCounter(rrHelper, maxlineCount) {
     }
 
     if (file.isStream()) {
-      var lineStream = new LineStream();
+      var lineStream = new LineStream({ keepEmptyLines: true });
       
       lineStream.on('data', function(line) {
         streamLineCount++;

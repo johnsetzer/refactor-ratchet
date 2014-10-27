@@ -69,8 +69,11 @@ gulp.task('rr-long-files', 'RR files that are too long', function(taskCb) {
     }
   });
 
+  // 20 isn't too long, but it returns some trues on our data set.
+  var maxlineCount = 20;
+
   rr.src({ buffer: false })
-    .pipe(RR.longFileCounter(rr.helper(), 20))
+    .pipe(RR.longFileCounter(rr.helper(), maxlineCount))
     .pipe(rr.dest(taskCb));
 });
 
