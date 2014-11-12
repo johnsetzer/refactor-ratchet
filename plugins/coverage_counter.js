@@ -21,8 +21,9 @@ function coverageCounter(rrHelper, specFileFunc) {
   rrHelper.addTotalKey(totalKey);
   rrHelper.addSyntheticTotaler(function (totalMetrics) {
     var key = rrHelper.key + '.truePercentage';
-    var truePct = totalMetrics[coveredKey + '.sum'] /
-      totalMetrics[totalKey + '.sum'] * 100;
+    var coveredLines = totalMetrics[coveredKey + '.sum'];
+    var totalLines = totalMetrics[totalKey + '.sum'];
+    var truePct =  coveredLines / totalLines * 100;
     totalMetrics[key] = truePct;
   })
 
