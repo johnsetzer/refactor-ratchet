@@ -37,9 +37,7 @@ function coverageCounter(rrHelper, specFileFunc) {
     if (file.isStream()) {
       var instrumentedPath = rrHelper.filePath(file);
       var specPath = specFileFunc(instrumentedPath);
-      console.log('processing', instrumentedPath, specPath);
-      // TODO
-      // noop if specPath doesn't exist
+      console.log('coveraging', instrumentedPath, specPath);
 
       // gulp-istanbul only takes buffers as of version 0.3.1
       // Instead of sending a pull request expediantly converting
@@ -54,7 +52,7 @@ function coverageCounter(rrHelper, specFileFunc) {
           verbose: true
         }))
         .on('finish', function () {
-          console.log('finished')
+          console.log('finished');
           var statements = istanbul.summarizeCoverage().statements;
           rrHelper.setFileMetric(file, rrHelper.key, statements.pct);
           rrHelper.setFileMetric(file, coveredKey, statements.covered);
