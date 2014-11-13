@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "refactor_ratchet",
+    "password": "opensaysme",
+    "database": "rr_development",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "refactor_ratchet",
+    "password": "opensaysme",
+    "database": "rr_test",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}

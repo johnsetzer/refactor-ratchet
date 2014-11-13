@@ -51,9 +51,11 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
 	  }
 	});
 
-  rr.src({ buffer: false })
-    .pipe(RR.matchCounter(rr.helper(), 'console.log'))
-    .pipe(rr.dest(taskCb));
+  rr.src({}, function(err, src) {
+    src
+      .pipe(RR.matchCounter(rr.helper(), 'console.log'))
+      .pipe(rr.dest(taskCb));
+  });
 });
 
 gulp.task('rr-long-files', 'RR files that are too long', function(taskCb) {
@@ -71,9 +73,11 @@ gulp.task('rr-long-files', 'RR files that are too long', function(taskCb) {
   // 20 isn't too long, but it returns some trues on our data set.
   var maxlineCount = 20;
 
-  rr.src({ buffer: false })
-    .pipe(RR.longFileCounter(rr.helper(), maxlineCount))
-    .pipe(rr.dest(taskCb));
+  rr.src({}, function(err, src) {
+    src
+      .pipe(RR.longFileCounter(rr.helper(), maxlineCount))
+      .pipe(rr.dest(taskCb));
+  });
 });
 
 var calcTestPath = function (jsPath) {
@@ -94,9 +98,11 @@ gulp.task('rr-has-test-file', 'RR lib files with spec files', function(taskCb) {
     }
   });
 
-  rr.src({ buffer: false })
+  rr.src({}, function(err, src) {
+    src
     .pipe(RR.matchingFileCounter(rr.helper(), calcTestPath))
     .pipe(rr.dest(taskCb));
+  });
 });
 
 gulp.task('rr-coverage', 'RR test coverate', function(taskCb) {
@@ -114,9 +120,12 @@ gulp.task('rr-coverage', 'RR test coverate', function(taskCb) {
     }
   });
 
-  rr.src({ buffer: false })
-    .pipe(coverageCounter(rr.helper(), calcTestPath))
-    .pipe(rr.dest(taskCb));
+  rr.src({}, function(err, src) {
+    src
+      .pipe(coverageCounter(rr.helper(), calcTestPath))
+      .pipe(rr.dest(taskCb));
+  });
+  
 });
 
 gulp.task('ratchet', 'Run all RR tasks', [
