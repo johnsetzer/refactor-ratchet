@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/johnsetzer/refactor-ratchet",
   "dependencies": {
-    "bluebird": "^2.3.2",
+    "bluebird": "^2.3.11",
     "byline": "^4.1.1",
     "fast-stats": "0.0.2",
     "gulp-istanbul": "^0.3.1",
