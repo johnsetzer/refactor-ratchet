@@ -3,6 +3,7 @@ gulp = require('gulp-help')(gulp);
 var jasmine = require('gulp-jasmine');
 var istanbul = require('gulp-istanbul');
 var _ = require('lodash');
+
 // NOTE:
 // All refactor-ratchet dependencies are required in
 // task functions to prevent require from loading
@@ -40,6 +41,7 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
 
     // Called before RR exits
   	done: function (err, totalMetrics, cb) {
+      if (err) { console.log(err); cb(); return; }
 	  	// Log to console
 	  	_(totalMetrics).forEach(function (v, k) {
 		  	console.log(k, v);
@@ -47,7 +49,7 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
 
   		// Send metrics somewhere useful.
   		// Example: Wavefront, Ganglia, SumoLogic, Splunk, etc...
-	  	cb();
+	  	reportToWavefront(totalMetrics, cb);
 	  }
 	});
 
@@ -107,7 +109,8 @@ gulp.task('rr-has-test-file', 'RR lib files with spec files', function(taskCb) {
 
 gulp.task('rr-coverage', 'RR test coverate', function(taskCb) {
   var Task = require('./lib/task');
-  var ConsoleReporter = require('./lib/console_reporter');
+  var ConsoleReporter = require('./plugins/console_reporter');
+  var WavefrontReporter = require('./plugins/wavefront_reporter');
   var coverageCounter = require('./plugins/coverage_counter');
 
   var rr = new Task({
@@ -116,7 +119,7 @@ gulp.task('rr-coverage', 'RR test coverate', function(taskCb) {
 
     done: function (err, totalMetrics, cb) {
       ConsoleReporter.report(totalMetrics);
-      cb();
+      WavefrontReporter.report(totalMetrics, cb);
     }
   });
 
