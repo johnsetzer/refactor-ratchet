@@ -6,10 +6,10 @@ var wavefrontHost = process.env.HOST || 'jsetzer-laptop';
 var wavefrontPrefix = process.env.PREFIX || 'jsetzer';
 var projectName = process.env.PROJECT || 'refactorRatchet';
 
-var reportToWavefront = function (totalMetrics, cb) {
+var reportToWavefront = function (totalMetrics, commit, cb) {
   var body = '';
   _(totalMetrics).forEach(function (v, k) {
-    var time = Math.round(new Date().getTime() / 1000);
+    var time = Math.round(commit.getDate());
     var key = wavefrontPrefix
     + '.rr.' 
     + projectName 

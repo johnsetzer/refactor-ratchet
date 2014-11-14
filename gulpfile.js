@@ -40,7 +40,7 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
     },
 
     // Called before RR exits
-  	done: function (err, totalMetrics, cb) {
+  	done: function (err, totalMetrics, commit, cb) {
       if (err) { console.log(err); cb(); return; }
 	  	// Log to console
 	  	_(totalMetrics).forEach(function (v, k) {
@@ -49,7 +49,7 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
 
   		// Send metrics somewhere useful.
   		// Example: Wavefront, Ganglia, SumoLogic, Splunk, etc...
-	  	reportToWavefront(totalMetrics, cb);
+	  	RR.WavefrontReporter.report(totalMetrics, commit, cb);
 	  }
 	});
 
@@ -66,9 +66,10 @@ gulp.task('rr-long-files', 'RR files that are too long', function(taskCb) {
     key: 'longFiles',
     paths: ['./lib/**/*.js'],
 
-    done: function (err, totalMetrics, cb) {
+    done: function (err, totalMetrics, commit, cb) {
+      if (err) { console.log(err); cb(); return; }
       RR.ConsoleReporter.report(totalMetrics);
-      cb();
+      RR.WavefrontReporter.report(totalMetrics, commit, cb);
     }
   });
 
@@ -94,9 +95,10 @@ gulp.task('rr-has-test-file', 'RR lib files with spec files', function(taskCb) {
     key: 'hasTestFile',
     paths: ['./lib/**/*.js'],
 
-    done: function (err, totalMetrics, cb) {
+    done: function (err, totalMetrics, commit, cb) {
+      if (err) { console.log(err); cb(); return; }
       RR.ConsoleReporter.report(totalMetrics);
-      cb();
+      RR.WavefrontReporter.report(totalMetrics, commit, cb);
     }
   });
 
@@ -117,9 +119,10 @@ gulp.task('rr-coverage', 'RR test coverate', function(taskCb) {
     key: 'coverage',
     paths: ['./lib/**/*.js'],
 
-    done: function (err, totalMetrics, cb) {
+    done: function (err, totalMetrics, commit, cb) {
+      if (err) { console.log(err); cb(); return; }
       ConsoleReporter.report(totalMetrics);
-      WavefrontReporter.report(totalMetrics, cb);
+      WavefrontReporter.report(totalMetrics, commit, cb);
     }
   });
 
