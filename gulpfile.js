@@ -12,7 +12,7 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
   var RR = require('./index');
   var rr = new RR.Task({
   	key: 'deprecatedFunc',
-  	paths: ['./lib/*.js'],
+  	paths: ['./lib/**/*.js'],
 
     // Chance to calculate your own total metrics before RR flushes them to the database.
     syntheticTotals: function (totalMetrics) {
@@ -62,7 +62,7 @@ gulp.task('rr-long-files', 'RR files that are too long', function(taskCb) {
   var RR = require('./index');
   var rr = new RR.Task({
     key: 'longFiles',
-    paths: ['./lib/*.js'],
+    paths: ['./lib/**/*.js'],
 
     done: function (err, totalMetrics, cb) {
       RR.ConsoleReporter.report(totalMetrics);
@@ -90,7 +90,7 @@ gulp.task('rr-has-test-file', 'RR lib files with spec files', function(taskCb) {
   var RR = require('./index');
   var rr = new RR.Task({
     key: 'hasTestFile',
-    paths: ['./lib/*.js'],
+    paths: ['./lib/**/*.js'],
 
     done: function (err, totalMetrics, cb) {
       RR.ConsoleReporter.report(totalMetrics);
@@ -112,7 +112,7 @@ gulp.task('rr-coverage', 'RR test coverate', function(taskCb) {
 
   var rr = new Task({
     key: 'coverage',
-    paths: ['./lib/*.js'],
+    paths: ['./lib/**/*.js'],
 
     done: function (err, totalMetrics, cb) {
       ConsoleReporter.report(totalMetrics);
