@@ -9,7 +9,7 @@ var projectName = process.env.PROJECT || 'refactorRatchet';
 var reportToWavefront = function (totalMetrics, commit, cb) {
   var body = '';
   _(totalMetrics).forEach(function (v, k) {
-    var time = Math.round(commit.getDate());
+    var time = Math.round(commit.time);
     var key = wavefrontPrefix
     + '.rr.' 
     + projectName 
@@ -17,7 +17,7 @@ var reportToWavefront = function (totalMetrics, commit, cb) {
     + k;
     body += key + ' ' + v + ' ' + time + '\n';
   });
-  //console.log('BODY', body);
+  console.log('BODY', body);
    
   request({
     method: 'POST',
@@ -27,7 +27,7 @@ var reportToWavefront = function (totalMetrics, commit, cb) {
   }, function(error, response, body) {
     if (error) { console.log(error); cb(); return;}
     console.log('Reported to Wavefront with response code =', response.statusCode);
-    //console.log('BODY', body);
+    console.log('BODY', body);
     cb();
   });
 };
