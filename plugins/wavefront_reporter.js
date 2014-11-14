@@ -25,10 +25,10 @@ var reportToWavefront = function (totalMetrics, cb) {
     qs: { hostname: 'jsetzer-laptop' },
     body: body
   }, function(error, response, body) {
-    if (error) { console.log(error); }
-    cb();
-    //console.log('STATUS', response.statusCode);
+    if (error) { console.log(error); cb(); return;}
+    console.log('Reported to Wavefront with response code =', response.statusCode);
     //console.log('BODY', body);
+    cb();
   });
 };
 

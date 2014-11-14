@@ -23,6 +23,7 @@ function coverageCounter(rrHelper, specFileFunc) {
     var key = rrHelper.key + '.truePercentage';
     var coveredLines = totalMetrics[coveredKey + '.sum'];
     var totalLines = totalMetrics[totalKey + '.sum'];
+    if (totalLines === 0) { totalLines = 1; }
     var truePct =  coveredLines / totalLines * 100;
     totalMetrics[key] = truePct;
   })
