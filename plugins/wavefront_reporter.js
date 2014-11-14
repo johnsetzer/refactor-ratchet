@@ -22,7 +22,7 @@ var reportToWavefront = function (totalMetrics, cb) {
   request({
     method: 'POST',
     uri: 'http://chipper.sjc1.yammer.com/queues/graphite-metrics',
-    qs: { hostname: 'jsetzer-laptop' },
+    qs: { hostname: wavefrontHost },
     body: body
   }, function(error, response, body) {
     if (error) { console.log(error); cb(); return;}
