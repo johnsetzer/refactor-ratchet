@@ -1,4 +1,4 @@
-var ConsoleReporter = require('../lib/console_reporter');
+var ConsoleReporter = require('../plugins/console_reporter');
 
 describe('ConsoleReporter', function () {
 	describe('report', function () {

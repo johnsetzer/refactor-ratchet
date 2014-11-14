@@ -13,7 +13,7 @@ gulp.task('rr-deprecated', 'RR deprecated function calls', function(taskCb) {
   var RR = require('./index');
   var rr = new RR.Task({
   	key: 'deprecatedFunc',
-  	paths: ['./lib/**/*.js'],
+  	paths: ['./lib/**/*.js', './plugins/**/*.js'],
 
     // Chance to calculate your own total metrics before RR flushes them to the database.
     syntheticTotals: function (totalMetrics) {
@@ -64,7 +64,7 @@ gulp.task('rr-long-files', 'RR files that are too long', function(taskCb) {
   var RR = require('./index');
   var rr = new RR.Task({
     key: 'longFiles',
-    paths: ['./lib/**/*.js'],
+    paths: ['./lib/**/*.js', './plugins/**/*.js'],
 
     done: function (err, totalMetrics, commit, cb) {
       if (err) { console.log(err); cb(); return; }
@@ -84,8 +84,8 @@ gulp.task('rr-long-files', 'RR files that are too long', function(taskCb) {
 });
 
 var calcTestPath = function (jsPath) {
-  var matches = jsPath.match(/lib\/(.*)(\.js)/);
-  var testPath = 'spec/' + matches[1] + '_spec.js';
+  var matches = jsPath.match(/(lib|plugins)\/(.*)(\.js)/);
+  var testPath = 'spec/' + matches[2] + '_spec.js';
   return testPath;
 };
 
@@ -93,7 +93,7 @@ gulp.task('rr-has-test-file', 'RR lib files with spec files', function(taskCb) {
   var RR = require('./index');
   var rr = new RR.Task({
     key: 'hasTestFile',
-    paths: ['./lib/**/*.js'],
+    paths: ['./lib/**/*.js', './plugins/**/*.js'],
 
     done: function (err, totalMetrics, commit, cb) {
       if (err) { console.log(err); cb(); return; }
@@ -117,7 +117,7 @@ gulp.task('rr-coverage', 'RR test coverate', function(taskCb) {
 
   var rr = new Task({
     key: 'coverage',
-    paths: ['./lib/**/*.js'],
+    paths: ['./lib/**/*.js', './plugins/**/*.js'],
 
     done: function (err, totalMetrics, commit, cb) {
       if (err) { console.log(err); cb(); return; }
@@ -149,7 +149,7 @@ gulp.task('test', 'Run unit tests', function () {
 });
 
 gulp.task('test-coverage', 'Run unit tests with test coverage', function (cb) {
-  gulp.src(['lib/**/*.js'])
+  gulp.src(['./lib/**/*.js', './plugins/**/*.js'])
     .pipe(istanbul({
       includeUntested: true
     }))
